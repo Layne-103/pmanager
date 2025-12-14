@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Layout } from './components/layout';
+import { TicketsPage, TagsPage } from './pages';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Ticket Manager
-        </h1>
-        <p className="text-lg text-gray-600 mb-8">
-          Phase 1: Core Infrastructure Complete ✓
-        </p>
-        <button
-          onClick={() => setCount((count) => count + 1)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
-        >
-          Count is {count}
-        </button>
-        <div className="mt-8 text-sm text-gray-500">
-          <p>✓ Backend: FastAPI + PostgreSQL</p>
-          <p>✓ Frontend: Vite + React + TypeScript</p>
-          <p>✓ Styling: Tailwind CSS</p>
-          <p>✓ Database: Migrations applied</p>
-        </div>
-      </div>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      </div>
-    </>
-  )
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<TicketsPage />} />
+            <Route path="/tags" element={<TagsPage />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
 }
 
-export default App
+export default App;
