@@ -21,7 +21,7 @@ export function TicketsPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-2xl p-6 border border-red-200"
+          className="bg-red-50 rounded-2xl p-6 border border-red-200"
         >
           <p className="text-red-800">Error loading tickets: {(error as Error).message}</p>
         </motion.div>
@@ -31,18 +31,18 @@ export function TicketsPage() {
 
   return (
     <Container>
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          className="text-center pt-8 pb-4"
+          className="text-center pt-6 pb-2"
         >
-          <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-600 bg-clip-text text-transparent">
             Tickets
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base text-gray-600">
             {isLoading ? 'Loading...' : `${tickets?.length || 0} total tickets`}
           </p>
         </motion.div>

@@ -32,10 +32,10 @@ export function FilterPanel({
     <Card className="p-6" delay={0.1}>
       <div className="space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-2">
-            <Filter className="w-5 h-5 text-gray-400" />
-            <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+            <Filter className="w-5 h-5 text-gray-500" />
+            <h3 className="text-base font-semibold text-gray-900">Filters</h3>
           </div>
           {hasFilters && (
             <motion.button
@@ -61,11 +61,11 @@ export function FilterPanel({
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Search tickets..."
               className={cn(
-                'w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200',
-                'bg-white/50 backdrop-blur-sm',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
+                'w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300',
+                'bg-white focus:bg-white',
+                'focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500',
                 'transition-all duration-200',
-                'placeholder:text-gray-400'
+                'placeholder:text-gray-400 text-sm'
               )}
             />
           </div>
@@ -76,13 +76,13 @@ export function FilterPanel({
               value={status}
               onChange={(e) => onStatusChange(e.target.value)}
               className={cn(
-                'w-full px-4 py-3 rounded-xl border border-gray-200',
-                'bg-white/50 backdrop-blur-sm',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
-                'transition-all duration-200',
+                'w-full px-4 py-2.5 rounded-xl border border-gray-300',
+                'bg-white focus:bg-white',
+                'focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500',
+                'transition-all duration-200 text-sm',
                 'cursor-pointer appearance-none',
                 'bg-[url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3E%3Cpath stroke=\'%236b7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'m6 8 4 4 4-4\'/%3E%3C/svg%3E")]',
-                'bg-[length:1.5em_1.5em] bg-[right_0.5rem_center] bg-no-repeat pr-10'
+                'bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10'
               )}
             >
               <option value="all">All Tickets</option>
@@ -99,11 +99,11 @@ export function FilterPanel({
               onChange={(e) => onTagsChange(e.target.value)}
               placeholder="Tag IDs (e.g., 1,2,3)"
               className={cn(
-                'w-full px-4 py-3 rounded-xl border border-gray-200',
-                'bg-white/50 backdrop-blur-sm',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
+                'w-full px-4 py-2.5 rounded-xl border border-gray-300',
+                'bg-white focus:bg-white',
+                'focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500',
                 'transition-all duration-200',
-                'placeholder:text-gray-400'
+                'placeholder:text-gray-400 text-sm'
               )}
             />
           </div>
