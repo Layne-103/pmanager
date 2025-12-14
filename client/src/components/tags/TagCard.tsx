@@ -1,70 +1,61 @@
 import { motion } from 'framer-motion';
-import { Tag as TagIcon, Ticket } from 'lucide-react';
+import { Tag as TagIcon, Trash2 } from 'lucide-react';
 import type { TagWithCount } from '../../types';
 import { Card } from '../ui/Card';
 
 interface TagCardProps {
   tag: TagWithCount;
   index: number;
+  onDelete?: (id: number) => void;
 }
 
-export function TagCard({ tag, index }: TagCardProps) {
+export function TagCard({ tag, index, onDelete }: TagCardProps) {
   return (
-    <Card delay={index * 0.05} className="p-6 group">
-      <div className="space-y-4">
-        {/* Icon and Title */}
-        <div className="flex items-start space-x-4">
+    <Card delay={index * 0.05} className="p-5 group cursor-pointer hover:shadow-lg transition-all">
+      <div className="space-y-3">
+        {/* Color and Name */}
+        <div className="flex items-center gap-3">
           <motion.div
-            whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-            transition={{ duration: 0.5 }}
-            className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm"
             style={{
-              backgroundColor: tag.color || '#e5e7eb',
-              boxShadow: tag.color ? `0 10px 30px -5px ${tag.color}40` : undefined,
+              backgroundColor: tag.color ? `${tag.color}20` : '#f3f4f6',
+              border: `2px solid ${tag.color || '#e5e7eb'}`,
             }}
           >
-            <TagIcon
-              className="w-7 h-7"
-              style={{ color: tag.color ? '#ffffff' : '#6b7280' }}
-              strokeWidth={2.5}
-            />
+            <TagIcon className="w-6 h-6" style={{ color: tag.color || '#6b7280' }} />
           </motion.div>
-
+          
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+            <h3 className="font-semibold text-gray-900 truncate">
               {tag.name}
             </h3>
-            <div className="flex items-center gap-2 mt-1">
-              <Ticket className="w-4 h-4 text-gray-400" />
-              <p className="text-sm text-gray-500">
-                {tag.ticketCount} {tag.ticketCount === 1 ? 'ticket' : 'tickets'}
-              </p>
-            </div>
           </div>
         </div>
 
-        {/* Color Code */}
-        {tag.color && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.05 + 0.2 }}
-            className="flex items-center justify-between pt-3 border-t border-gray-100"
-          >
-            <span className="text-xs font-mono text-gray-400 uppercase tracking-wider">
-              Color
+        {/* Ticket Count and Actions */}
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="flex items-center gap-2 text-gray-600">
+            <span className="text-sm font-medium">
+              {tag.ticketCount} {tag.ticketCount === 1 ? 'ticket' : 'tickets'}
             </span>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-gray-600">
-                {tag.color}
-              </span>
-              <div
-                className="w-4 h-4 rounded border border-gray-200"
-                style={{ backgroundColor: tag.color }}
-              />
-            </div>
-          </motion.div>
-        )}
+          </div>
+
+          {/* Delete Button */}
+          {onDelete && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(tag.id);
+              }}
+              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md hover:bg-red-50 text-gray-400 hover:text-red-600 transition-all"
+              title="Delete tag"
+              type="button"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
     </Card>
   );

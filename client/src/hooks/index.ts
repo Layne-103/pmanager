@@ -17,3 +17,5 @@ export {
   useUpdateTag,
   useDeleteTag,
 } from './useTags';
+
+export { useDebounce } from './useDebounce';
