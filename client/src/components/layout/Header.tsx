@@ -16,24 +16,22 @@ export function Header() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-      className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-200/60 shadow-sm"
+      className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
+          <Link to="/" className="flex items-center space-x-2.5 group">
             <motion.div
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6, ease: 'easeInOut' }}
-              className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow duration-300"
+              className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm"
             >
-              <Layers className="w-5 h-5 text-white" strokeWidth={2.5} />
+              <Layers className="w-4 h-4 text-white" strokeWidth={2.5} />
             </motion.div>
-            <div>
-              <h1 className="text-lg font-semibold text-gray-900">
-                Ticket Manager
-              </h1>
-            </div>
+            <span className="text-base font-semibold text-gray-900">
+              Ticket Manager
+            </span>
           </Link>
 
           {/* Navigation */}
@@ -46,11 +44,11 @@ export function Header() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="relative px-4 py-2 rounded-lg group"
+                  className="relative px-3 py-1.5 rounded-lg group"
                 >
                   <div
                     className={cn(
-                      'flex items-center space-x-2 transition-all duration-200',
+                      'flex items-center space-x-1.5 transition-all duration-200',
                       isActive
                         ? 'text-blue-600'
                         : 'text-gray-600 group-hover:text-gray-900'
