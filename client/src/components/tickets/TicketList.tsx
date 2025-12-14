@@ -1,7 +1,7 @@
 import type { Ticket } from '../../types';
 import { TicketCard } from './TicketCard';
 import { EmptyTicketState } from './EmptyTicketState';
-import { LoadingSpinner } from '../common/LoadingSpinner';
+import { TicketSkeletonGrid } from '../common/TicketSkeleton';
 
 interface TicketListProps {
   tickets: Ticket[];
@@ -21,7 +21,7 @@ export function TicketList({
   onCreateTicket,
 }: TicketListProps) {
   if (loading) {
-    return <LoadingSpinner message="Loading tickets..." />;
+    return <TicketSkeletonGrid count={6} />;
   }
 
   if (tickets.length === 0) {

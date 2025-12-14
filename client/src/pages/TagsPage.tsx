@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { Container } from '../components/layout';
 import { TagGrid } from '../components/tags';
 import { TagCreateDialog } from '../components/tag';
-import { ConfirmDialog, LoadingSpinner } from '../components/common';
+import { ConfirmDialog, TagSkeletonGrid } from '../components/common';
 import { useTags, useCreateTag, useDeleteTag } from '../hooks';
 import type { CreateTagRequest } from '../types';
 
@@ -63,7 +63,15 @@ export function TagsPage() {
   if (isLoading) {
     return (
       <Container>
-        <LoadingSpinner message="Loading tags..." />
+        <div className="space-y-5">
+          <div className="flex items-center justify-between pt-4 pb-1">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Tags</h1>
+              <p className="mt-1 text-gray-600">Organize your tickets with tags</p>
+            </div>
+          </div>
+          <TagSkeletonGrid count={8} />
+        </div>
       </Container>
     );
   }
