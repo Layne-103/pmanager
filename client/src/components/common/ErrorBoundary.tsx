@@ -34,7 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
     // Log the error to console for debugging
     console.error('Uncaught error:', error);
     console.error('Error info:', errorInfo);
-    
+
     // Update state with error info
     this.setState({ errorInfo });
 

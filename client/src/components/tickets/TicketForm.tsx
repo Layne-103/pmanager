@@ -27,7 +27,7 @@ export function TicketForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
-    
+
     onSubmit({
       title: title.trim(),
       description: description.trim() || undefined,

@@ -30,12 +30,12 @@ def upgrade() -> None:
         END;
         $$ language 'plpgsql';
     """)
-    
+
     # Create trigger on tickets table
     op.execute("""
-        CREATE TRIGGER update_tickets_updated_at 
-        BEFORE UPDATE ON tickets 
-        FOR EACH ROW 
+        CREATE TRIGGER update_tickets_updated_at
+        BEFORE UPDATE ON tickets
+        FOR EACH ROW
         EXECUTE FUNCTION update_updated_at_column();
     """)
 
@@ -44,7 +44,7 @@ def downgrade() -> None:
     """Downgrade schema."""
     # Drop trigger
     op.execute("DROP TRIGGER IF EXISTS update_tickets_updated_at ON tickets;")
-    
+
     # Drop function
     op.execute("DROP FUNCTION IF EXISTS update_updated_at_column();")
 

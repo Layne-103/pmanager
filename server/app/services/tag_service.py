@@ -15,7 +15,7 @@ def get_tags_with_counts(db: Session) -> List[TagWithCount]:
     ).outerjoin(
         ticket_tags, Tag.id == ticket_tags.c.tag_id
     ).group_by(Tag.id).order_by(Tag.name).all()
-    
+
     return [
         TagWithCount(
             id=tag.id,
@@ -41,13 +41,13 @@ def create_tag(db: Session, tag: TagCreate) -> Tag:
     existing = db.query(Tag).filter(
         func.lower(Tag.name) == tag.name.lower()
     ).first()
-    
+
     if existing:
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail=f"Tag '{tag.name}' already exists"
         )
-    
+
     db_tag = Tag(name=tag.name, color=tag.color)
     db.add(db_tag)
     db.commit()
@@ -58,25 +58,25 @@ def create_tag(db: Session, tag: TagCreate) -> Tag:
 def update_tag(db: Session, tag_id: int, tag: TagUpdate) -> Tag:
     """Update a tag"""
     db_tag = get_tag_by_id(db, tag_id)
-    
+
     # Check for duplicate name if name is being updated
     if tag.name is not None:
         existing = db.query(Tag).filter(
             func.lower(Tag.name) == tag.name.lower(),
             Tag.id != tag_id
         ).first()
-        
+
         if existing:
             raise HTTPException(
                 status_code=400,
                 detail=f"Tag '{tag.name}' already exists"
             )
-        
+
         db_tag.name = tag.name
-    
+
     if tag.color is not None:
         db_tag.color = tag.color
-    
+
     db.commit()
     db.refresh(db_tag)
     return db_tag
@@ -85,6 +85,6 @@ def update_tag(db: Session, tag_id: int, tag: TagUpdate) -> Tag:
 def delete_tag(db: Session, tag_id: int) -> None:
     """Delete a tag"""
     db_tag = get_tag_by_id(db, tag_id)
-    
+
     db.delete(db_tag)
     db.commit()

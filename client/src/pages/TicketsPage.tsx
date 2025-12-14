@@ -11,7 +11,7 @@ export function TicketsPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('all');
   const [selectedTags, setSelectedTags] = useState<string>('');
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
   const [deletingTicketId, setDeletingTicketId] = useState<number | null>(null);
@@ -29,12 +29,20 @@ export function TicketsPage() {
 
   const handleCreate = async (data: CreateTicketRequest) => {
     try {
-      await createMutation.mutateAsync(data);
+      const newTicket = await createMutation.mutateAsync(data);
       setIsModalOpen(false);
-      toast.success('Ticket created successfully');
+      toast.success('Ticket created successfully', {
+        description: `"${data.title}" has been added to your tickets`,
+        duration: 4000,
+      });
+      console.log('Created ticket:', newTicket);
     } catch (error) {
       console.error('Create error:', error);
-      toast.error('Failed to create ticket');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error('Failed to create ticket', {
+        description: errorMessage,
+        duration: 5000,
+      });
     }
   };
 
@@ -49,16 +57,23 @@ export function TicketsPage() {
       console.error('No ticket being edited');
       return;
     }
-    
+
     try {
       console.log('Updating ticket:', editingTicket.id, data);
       await updateMutation.mutateAsync({ id: editingTicket.id, data });
       setIsModalOpen(false);
       setEditingTicket(null);
-      toast.success('Ticket updated successfully');
+      toast.success('Ticket updated successfully', {
+        description: `"${data.title}" has been updated`,
+        duration: 4000,
+      });
     } catch (error) {
       console.error('Update error:', error);
-      toast.error('Failed to update ticket');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error('Failed to update ticket', {
+        description: errorMessage,
+        duration: 5000,
+      });
     }
   };
 
@@ -67,7 +82,7 @@ export function TicketsPage() {
       console.error('No ticket to delete');
       return;
     }
-    
+
     try {
       console.log('Deleting ticket:', deletingTicketId);
       await deleteMutation.mutateAsync(deletingTicketId);

@@ -42,7 +42,7 @@ export function TagCreateDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    
+
     onSubmit({ name: name.trim(), color });
     handleClose();
   };

@@ -21,7 +21,7 @@ class TagUpdate(BaseModel):
 
 class TagResponse(TagBase):
     created_at: datetime = Field(..., serialization_alias="createdAt")
-    
+
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True
@@ -30,7 +30,7 @@ class TagResponse(TagBase):
 
 class TagWithCount(TagBase):
     ticket_count: int = Field(..., serialization_alias="ticketCount")
-    
+
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True

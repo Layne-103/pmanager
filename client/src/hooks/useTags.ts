@@ -28,7 +28,7 @@ export function useTag(id: number) {
  */
 export function useCreateTag() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (tag: CreateTagRequest) => tagService.create(tag),
     onSuccess: () => {
@@ -42,7 +42,7 @@ export function useCreateTag() {
  */
 export function useUpdateTag() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, tag }: { id: number; tag: UpdateTagRequest }) =>
       tagService.update(id, tag),
@@ -59,7 +59,7 @@ export function useUpdateTag() {
  */
 export function useDeleteTag() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: number) => tagService.delete(id),
     onSuccess: () => {

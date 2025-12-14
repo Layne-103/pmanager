@@ -7,7 +7,7 @@ class TagBase(BaseModel):
     id: int
     name: str
     color: Optional[str] = None
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -32,7 +32,7 @@ class TicketResponse(TicketBase):
     created_at: datetime = Field(..., serialization_alias="createdAt")
     updated_at: datetime = Field(..., serialization_alias="updatedAt")
     tags: List[TagBase] = []
-    
+
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True  # Allow both snake_case and camelCase for input

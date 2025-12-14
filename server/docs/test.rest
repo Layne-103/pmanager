@@ -1,6 +1,6 @@
 ###
 # Ticket Manager API - REST Client Tests
-# 
+#
 # Instructions:
 # 1. Install REST Client extension in VS Code
 # 2. Update the @baseUrl variable if your server runs on a different port

@@ -67,13 +67,13 @@ show_menu() {
 run_command() {
     local cmd=$1
     local description=$2
-    
+
     echo -e "${YELLOW}Running: ${description}${NC}"
     echo -e "${GREEN}Command: ${cmd}${NC}"
     echo ""
-    
+
     eval "$cmd"
-    
+
     echo ""
     echo "---"
     echo ""
@@ -83,7 +83,7 @@ while true; do
     show_menu
     read -p "Enter choice [0-20]: " choice
     echo ""
-    
+
     case $choice in
         1)
             run_command \
@@ -194,7 +194,7 @@ while true; do
             echo ""
             ;;
     esac
-    
+
     read -p "Press Enter to continue..."
     clear
 done

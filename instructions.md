@@ -12,21 +12,25 @@
 按照这个想法，帮我生成详细的需求和设计文档，放在 ./specs/0001-spec.md 文件中。 输出为英文
 
 
-# Implementation plan
+## Implementation plan
 
 按照 ./specs/0001-spec.md 中的需求和设计文档，生成生成一个详细的实现计划， 放在 ./specs/0002-implementation-plan.md 中，输出为英文。
 
-# Phased implementation
+## Phased implementation
 按照  ./specs/0002-implementation-plan.md 完整实现整个项目的 phase 1 代码
 
 按照  ./specs/0002-implementation-plan.md 完整实现整个项目的 phase 2 代码
 
-# add seed.sql
+## add seed.sql
 Add a file named "seed.sql" which contains 50 meaningful tickets and 10 tags (including platform tags such as "ios", project tags such as "auto release", functional tags such as "autocomplete", etc.)
 
 
-# Optimize the ui
+## Optimize the ui
 
 按照apple website 的设计风格， think ultra hard, 优化UI 和UX
+
+## pre-commit & gh action
+
+use pre-commit to init the config and setup precommit for python and typescript for this project, also setup github action properly
 
 

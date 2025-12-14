@@ -29,7 +29,7 @@ api.interceptors.response.use(
           message = data.detail;
         } else if (Array.isArray(data.detail)) {
           // Validation errors from FastAPI
-          message = data.detail.map((err: any) => 
+          message = data.detail.map((err: any) =>
             `${err.loc?.join(' → ') || 'Field'}: ${err.msg}`
           ).join(', ');
         }

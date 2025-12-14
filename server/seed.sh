@@ -27,14 +27,14 @@ fi
 
 echo "📊 Current database status:"
 psql -d pmanager -c "
-    SELECT 
-        'Tags' as type, 
-        COUNT(*) as count 
+    SELECT
+        'Tags' as type,
+        COUNT(*) as count
     FROM tags
     UNION ALL
-    SELECT 
-        'Tickets' as type, 
-        COUNT(*) as count 
+    SELECT
+        'Tickets' as type,
+        COUNT(*) as count
     FROM tickets;
 " 2>/dev/null || echo "   Database tables not yet created"
 
@@ -56,26 +56,26 @@ echo "✅ Seeding completed successfully!"
 echo ""
 echo "📈 Summary:"
 psql -d pmanager -c "
-    SELECT 
-        'Tags' as type, 
-        COUNT(*) as count 
+    SELECT
+        'Tags' as type,
+        COUNT(*) as count
     FROM tags
     UNION ALL
-    SELECT 
-        'Tickets' as type, 
-        COUNT(*) as count 
+    SELECT
+        'Tickets' as type,
+        COUNT(*) as count
     FROM tickets
     UNION ALL
-    SELECT 
-        'Completed' as type, 
-        COUNT(*) as count 
-    FROM tickets 
+    SELECT
+        'Completed' as type,
+        COUNT(*) as count
+    FROM tickets
     WHERE is_completed = true
     UNION ALL
-    SELECT 
-        'Open' as type, 
-        COUNT(*) as count 
-    FROM tickets 
+    SELECT
+        'Open' as type,
+        COUNT(*) as count
+    FROM tickets
     WHERE is_completed = false;
 "
 

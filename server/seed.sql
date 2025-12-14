@@ -194,29 +194,29 @@ INSERT INTO ticket_tags (ticket_id, tag_id) VALUES
 -- ============================================================================
 
 -- Show summary
-SELECT 
-    'Tags' as type, 
-    COUNT(*) as count 
+SELECT
+    'Tags' as type,
+    COUNT(*) as count
 FROM tags
 UNION ALL
-SELECT 
-    'Tickets' as type, 
-    COUNT(*) as count 
+SELECT
+    'Tickets' as type,
+    COUNT(*) as count
 FROM tickets
 UNION ALL
-SELECT 
-    'Completed Tickets' as type, 
-    COUNT(*) as count 
-FROM tickets 
+SELECT
+    'Completed Tickets' as type,
+    COUNT(*) as count
+FROM tickets
 WHERE is_completed = true
 UNION ALL
-SELECT 
-    'Tag Associations' as type, 
-    COUNT(*) as count 
+SELECT
+    'Tag Associations' as type,
+    COUNT(*) as count
 FROM ticket_tags;
 
 -- Show tag distribution
-SELECT 
+SELECT
     t.name as tag_name,
     COUNT(tt.ticket_id) as ticket_count
 FROM tags t
@@ -225,13 +225,13 @@ GROUP BY t.id, t.name
 ORDER BY ticket_count DESC, t.name;
 
 -- Show completion stats by tag
-SELECT 
+SELECT
     t.name as tag_name,
     COUNT(DISTINCT tk.id) as total_tickets,
     COUNT(DISTINCT CASE WHEN tk.is_completed THEN tk.id END) as completed_tickets,
     ROUND(
-        100.0 * COUNT(DISTINCT CASE WHEN tk.is_completed THEN tk.id END) / 
-        NULLIF(COUNT(DISTINCT tk.id), 0), 
+        100.0 * COUNT(DISTINCT CASE WHEN tk.is_completed THEN tk.id END) /
+        NULLIF(COUNT(DISTINCT tk.id), 0),
         1
     ) as completion_rate
 FROM tags t
@@ -245,7 +245,7 @@ ORDER BY total_tickets DESC;
 -- ============================================================================
 
 -- This seed file creates a realistic project management scenario with:
--- 
+--
 -- Platform Coverage:
 --   - 8 iOS tickets (mobile app development)
 --   - 7 Android tickets (mobile app development)

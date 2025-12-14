@@ -32,7 +32,7 @@ export function useTicket(id: number) {
  */
 export function useCreateTicket() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (ticket: CreateTicketRequest) => ticketService.create(ticket),
     onSuccess: () => {
@@ -47,9 +47,9 @@ export function useCreateTicket() {
  */
 export function useUpdateTicket() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateTicketRequest }) => 
+    mutationFn: ({ id, data }: { id: number; data: UpdateTicketRequest }) =>
       ticketService.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['tickets'] });
@@ -64,7 +64,7 @@ export function useUpdateTicket() {
  */
 export function useDeleteTicket() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: number) => ticketService.delete(id),
     onSuccess: () => {
@@ -79,7 +79,7 @@ export function useDeleteTicket() {
  */
 export function useToggleComplete() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: number) => ticketService.toggleComplete(id),
     onSuccess: (_, id) => {
@@ -97,7 +97,7 @@ export const useToggleTicketComplete = useToggleComplete;
  */
 export function useAddTagsToTicket() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ ticketId, tagIds }: { ticketId: number; tagIds: number[] }) =>
       ticketService.addTags(ticketId, tagIds),
@@ -114,7 +114,7 @@ export function useAddTagsToTicket() {
  */
 export function useRemoveTagFromTicket() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ ticketId, tagId }: { ticketId: number; tagId: number }) =>
       ticketService.removeTag(ticketId, tagId),

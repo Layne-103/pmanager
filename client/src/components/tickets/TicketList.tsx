@@ -1,5 +1,5 @@
 import type { Ticket } from '../../types';
-import { TicketCard } from './TicketCard';
+import { AppleTicketCard } from './AppleTicketCard';
 import { EmptyTicketState } from './EmptyTicketState';
 import { TicketSkeletonGrid } from '../common/TicketSkeleton';
 
@@ -29,9 +29,9 @@ export function TicketList({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {tickets.map((ticket, index) => (
-        <TicketCard
+        <AppleTicketCard
           key={ticket.id}
           ticket={ticket}
           index={index}

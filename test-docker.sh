@@ -62,9 +62,9 @@ if docker run --rm -d --name pmanager-backend-test \
     -e DATABASE_URL="postgresql://postgres:password@localhost:5432/pmanager" \
     -e ALLOWED_ORIGINS="http://localhost:8080" \
     pmanager-backend:test > /dev/null 2>&1; then
-    
+
     sleep 5  # Wait for startup
-    
+
     # Check if container is running
     if docker ps | grep pmanager-backend-test > /dev/null; then
         echo -e "${GREEN}✅ Backend container started successfully${NC}"
@@ -85,19 +85,19 @@ echo "Test 6: Testing frontend container..."
 if docker run --rm -d --name pmanager-frontend-test \
     -p 8081:8080 \
     pmanager-frontend:test > /dev/null 2>&1; then
-    
+
     sleep 3  # Wait for startup
-    
+
     # Check if container is running
     if docker ps | grep pmanager-frontend-test > /dev/null; then
         echo -e "${GREEN}✅ Frontend container started successfully${NC}"
         docker logs pmanager-frontend-test 2>&1 | tail -5
-        
+
         # Test health endpoint
         if curl -s http://localhost:8081/health > /dev/null 2>&1; then
             echo -e "${GREEN}✅ Frontend health check passed${NC}"
         fi
-        
+
         docker stop pmanager-frontend-test > /dev/null 2>&1
     else
         echo -e "${RED}❌ Frontend container failed to start${NC}"

@@ -1,9 +1,9 @@
 import { api } from './api';
-import type { 
-  Ticket, 
-  CreateTicketRequest, 
+import type {
+  Ticket,
+  CreateTicketRequest,
   UpdateTicketRequest,
-  TicketsListResponse 
+  TicketsListResponse
 } from '../types/ticket';
 
 export const ticketService = {
@@ -69,7 +69,8 @@ export const ticketService = {
   /**
    * Remove a tag from a ticket
    */
-  async removeTag(ticketId: number, tagId: number): Promise<void> {
-    await api.delete(`/api/tickets/${ticketId}/tags/${tagId}`);
+  async removeTag(ticketId: number, tagId: number): Promise<Ticket> {
+    const response = await api.delete<Ticket>(`/api/tickets/${ticketId}/tags/${tagId}`);
+    return response.data;
   },
 };

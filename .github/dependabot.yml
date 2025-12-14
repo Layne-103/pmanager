@@ -1,0 +1,47 @@
+version: 2
+updates:
+  # Frontend dependencies
+  - package-ecosystem: 'npm'
+    directory: '/client'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    open-pull-requests-limit: 5
+    reviewers:
+      - 'jianglin.guo'
+    labels:
+      - 'dependencies'
+      - 'frontend'
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-patch']
+
+  # Python dependencies
+  - package-ecosystem: 'pip'
+    directory: '/server'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    open-pull-requests-limit: 5
+    reviewers:
+      - 'jianglin.guo'
+    labels:
+      - 'dependencies'
+      - 'backend'
+    commit-message:
+      prefix: 'chore(deps)'
+
+  # GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    open-pull-requests-limit: 3
+    labels:
+      - 'dependencies'
+      - 'ci/cd'
+    commit-message:
+      prefix: 'chore(ci)'

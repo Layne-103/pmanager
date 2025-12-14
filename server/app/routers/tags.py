@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
 from app.schemas.tag import (
-    TagCreate, 
-    TagUpdate, 
-    TagResponse, 
-    TagWithCount, 
+    TagCreate,
+    TagUpdate,
+    TagResponse,
+    TagWithCount,
     TagsListResponse
 )
 from app.services import tag_service

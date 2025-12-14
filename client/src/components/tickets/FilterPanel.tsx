@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, X } from 'lucide-react';
-import { Card } from '../ui/Card';
 import { cn } from '../../lib/cn';
 import { useDebounce } from '../../hooks';
+import { TagFilterSelector } from './TagFilterSelector';
+import { StatusFilterDropdown } from './StatusFilterDropdown';
 
 interface FilterPanelProps {
   search: string;
@@ -25,6 +26,11 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const [searchInput, setSearchInput] = useState(search);
   const debouncedSearch = useDebounce(searchInput, 300);
+
+  // Parse selected tag names from comma-separated string
+  const selectedTagNames = selectedTags
+    ? selectedTags.split(',').map((t) => t.trim()).filter(Boolean)
+    : [];
 
   // Update parent when debounced value changes
   useEffect(() => {
@@ -54,6 +60,10 @@ export function FilterPanel({
     onSearchChange('');
   };
 
+  const handleTagsChange = (tagNames: string[]) => {
+    onTagsChange(tagNames.join(','));
+  };
+
   // Count active filters
   const activeFilterCount = [
     search,
@@ -62,37 +72,55 @@ export function FilterPanel({
   ].filter(Boolean).length;
 
   return (
-    <Card className="p-5 shadow-sm" delay={0.1}>
-      <div className="space-y-4">
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+      className={cn(
+        "bg-white rounded-[16px] p-6",
+        "border border-gray-100",
+        "shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.03)]",
+        "relative z-10"
+      )}
+    >
+      <div className="space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-              <Filter className="w-4 h-4 text-gray-600" />
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-[10px] bg-blue-50 flex items-center justify-center">
+              <Filter className="w-[18px] h-[18px] text-blue-600" strokeWidth={2.5} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Filters</h3>
+              <h3 className="text-[17px] font-semibold text-gray-900 tracking-[-0.022em]">Filters</h3>
               {activeFilterCount > 0 && (
-                <p className="text-xs text-gray-500">{activeFilterCount} active</p>
+                <p className="text-[13px] text-gray-500 mt-0.5">{activeFilterCount} active</p>
               )}
             </div>
           </div>
           {hasFilters && (
             <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={clearFilters}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100 transition-colors"
+              className={cn(
+                "flex items-center gap-2 px-3 py-1.5",
+                "text-[13px] font-medium text-gray-600",
+                "hover:text-blue-600",
+                "rounded-[8px] hover:bg-blue-50",
+                "transition-all duration-200"
+              )}
               type="button"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" strokeWidth={2.5} />
               <span>Clear All</span>
             </motion.button>
           )}
         </div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
@@ -127,45 +155,17 @@ export function FilterPanel({
             )}
           </div>
 
-          {/* Status */}
-          <div className="relative">
-            <select
-              value={status}
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => onStatusChange(e.target.value)}
-              className={cn(
-                'w-full px-3 py-2 rounded-lg border',
-                status !== 'all' ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white',
-                'text-sm text-gray-900',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
-                'transition-all duration-200',
-                'cursor-pointer appearance-none',
-                'bg-[url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3E%3Cpath stroke=\'%236b7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'m6 8 4 4 4-4\'/%3E%3C/svg%3E")]',
-                'bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-9'
-              )}
-            >
-              <option value="all">All Tickets</option>
-              <option value="open">Open Only</option>
-              <option value="completed">Completed Only</option>
-            </select>
-          </div>
+          {/* Status - Custom Dropdown */}
+          <StatusFilterDropdown
+            value={status}
+            onChange={onStatusChange}
+          />
 
           {/* Tags */}
-          <div className="relative">
-            <input
-              type="text"
-              value={selectedTags}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => onTagsChange(e.target.value)}
-              placeholder="Tag IDs (e.g., 1,2,3)"
-              className={cn(
-                'w-full px-3 py-2 rounded-lg border',
-                selectedTags ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white',
-                'text-sm text-gray-900',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
-                'transition-all duration-200',
-                'placeholder:text-gray-400'
-              )}
-            />
-          </div>
+          <TagFilterSelector
+            selectedTagNames={selectedTagNames}
+            onTagsChange={handleTagsChange}
+          />
         </div>
 
         {/* Active Filters Display */}
@@ -189,12 +189,12 @@ export function FilterPanel({
             )}
             {selectedTags && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-purple-50 text-purple-700 text-xs font-medium">
-                Tags: {selectedTags}
+                Tags: {selectedTagNames.join(', ')}
               </span>
             )}
           </motion.div>
         )}
       </div>
-    </Card>
+    </motion.div>
   );
 }

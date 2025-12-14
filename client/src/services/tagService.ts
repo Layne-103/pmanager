@@ -1,9 +1,9 @@
 import { api } from './api';
-import type { 
-  TagWithCount, 
+import type {
+  TagWithCount,
   CreateTagRequest,
   UpdateTagRequest,
-  TagsListResponse 
+  TagsListResponse
 } from '../types/tag';
 
 export const tagService = {

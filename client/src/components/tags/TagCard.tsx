@@ -25,7 +25,7 @@ export function TagCard({ tag, index, onDelete }: TagCardProps) {
           >
             <TagIcon className="w-6 h-6" style={{ color: tag.color || '#6b7280' }} />
           </motion.div>
-          
+
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-gray-900 truncate">
               {tag.name}

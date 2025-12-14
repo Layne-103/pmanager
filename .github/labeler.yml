@@ -1,0 +1,45 @@
+# Auto-labeling configuration for PRs
+
+'backend':
+  - server/**/*
+  - server/*
+
+'frontend':
+  - client/**/*
+  - client/*
+
+'documentation':
+  - '**/*.md'
+  - docs/**/*
+
+'dependencies':
+  - package.json
+  - package-lock.json
+  - requirements.txt
+  - pyproject.toml
+
+'tests':
+  - '**/*test*.py'
+  - '**/*test*.ts'
+  - '**/*test*.tsx'
+  - server/tests/**/*
+
+'ci/cd':
+  - .github/**/*
+  - .pre-commit-config.yaml
+  - Dockerfile*
+  - docker-compose*.yml
+
+'database':
+  - server/alembic/**/*
+  - '**/*migrations*'
+  - server/app/models/**/*
+
+'api':
+  - server/app/routers/**/*
+  - server/app/schemas/**/*
+
+'ui/ux':
+  - client/src/components/**/*
+  - '**/*.css'
+  - '**/*.scss'

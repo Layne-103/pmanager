@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 /**
  * Hook that debounces a value by a specified delay
  * Useful for search inputs to avoid excessive API calls
- * 
+ *
  * @param value - The value to debounce
  * @param delay - Delay in milliseconds (default: 300ms)
  * @returns The debounced value
