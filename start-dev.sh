@@ -18,7 +18,7 @@ echo "✅ PostgreSQL is running"
 # Start backend in background
 echo "🔧 Starting backend server..."
 cd server
-source venv/bin/activate
+source .venv/bin/activate
 export DATABASE_URL="postgresql://$(whoami):@localhost:5432/pmanager"
 export SECRET_KEY="dev-secret-key"
 export ALLOWED_ORIGINS="http://localhost:5173,http://127.0.0.1:5173"

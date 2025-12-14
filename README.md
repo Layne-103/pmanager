@@ -68,19 +68,20 @@ pmanager/
 - Node.js 18+
 - PostgreSQL 15+
 - Git
+- uv (fast Python package manager) - Install with: `brew install uv` or `pip install uv`
 
 ### Backend Setup
 
-1. Create and activate virtual environment:
+1. Create and activate virtual environment with uv:
 ```bash
 cd server
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-2. Install dependencies:
+2. Install dependencies (much faster with uv):
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 3. Create `.env` file in project root:
@@ -102,6 +103,12 @@ alembic upgrade head
 
 6. Start the backend server:
 ```bash
+uv run uvicorn app.main:app --reload --port 8000
+```
+
+Or activate the virtual environment first:
+```bash
+source .venv/bin/activate
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -130,8 +137,14 @@ The frontend will be available at http://localhost:5173
 Terminal 1 - Backend:
 ```bash
 cd server
-source venv/bin/activate
+source .venv/bin/activate
 uvicorn app.main:app --reload --port 8000
+```
+
+Or use uv directly (no activation needed):
+```bash
+cd server
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 Terminal 2 - Frontend:
