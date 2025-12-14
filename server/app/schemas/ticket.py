@@ -47,3 +47,21 @@ class TicketsListResponse(BaseModel):
 class AddTagsRequest(BaseModel):
     """Request model for adding tags to a ticket"""
     tag_ids: List[int] = Field(..., serialization_alias="tagIds", alias="tagIds")
+
+
+class BatchUpdateStatusRequest(BaseModel):
+    """Request model for batch updating ticket status"""
+    ticket_ids: List[int] = Field(..., serialization_alias="ticketIds", alias="ticketIds")
+    is_completed: bool = Field(..., serialization_alias="isCompleted", alias="isCompleted")
+
+
+class BatchDeleteRequest(BaseModel):
+    """Request model for batch deleting tickets"""
+    ticket_ids: List[int] = Field(..., serialization_alias="ticketIds", alias="ticketIds")
+
+
+class BatchOperationResponse(BaseModel):
+    """Response model for batch operations"""
+    success: bool
+    affected_count: int = Field(..., serialization_alias="affectedCount")
+    message: str

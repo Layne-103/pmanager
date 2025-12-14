@@ -3,7 +3,10 @@ import type {
   Ticket,
   CreateTicketRequest,
   UpdateTicketRequest,
-  TicketsListResponse
+  TicketsListResponse,
+  BatchUpdateStatusRequest,
+  BatchDeleteRequest,
+  BatchOperationResponse,
 } from '../types/ticket';
 
 export const ticketService = {
@@ -71,6 +74,30 @@ export const ticketService = {
    */
   async removeTag(ticketId: number, tagId: number): Promise<Ticket> {
     const response = await api.delete<Ticket>(`/api/tickets/${ticketId}/tags/${tagId}`);
+    return response.data;
+  },
+
+  /**
+   * Batch update ticket status
+   */
+  async batchUpdateStatus(
+    ticketIds: number[],
+    isCompleted: boolean
+  ): Promise<BatchOperationResponse> {
+    const response = await api.post<BatchOperationResponse>('/api/tickets/batch/status', {
+      ticketIds,
+      isCompleted,
+    });
+    return response.data;
+  },
+
+  /**
+   * Batch delete tickets
+   */
+  async batchDelete(ticketIds: number[]): Promise<BatchOperationResponse> {
+    const response = await api.post<BatchOperationResponse>('/api/tickets/batch/delete', {
+      ticketIds,
+    });
     return response.data;
   },
 };

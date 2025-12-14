@@ -249,3 +249,169 @@ class TestTicketFiltering:
             assert response.status_code == status.HTTP_200_OK
             data = response.json()
             assert len(data["tickets"]) == 1
+
+
+class TestBatchOperations:
+    """Tests for batch operations on tickets"""
+
+    def test_batch_update_status_to_completed(self, client):
+        """Test batch updating tickets to completed status"""
+        # Create multiple tickets
+        ticket_ids = []
+        for i in range(3):
+            response = client.post("/api/tickets", json={"title": f"Ticket {i+1}"})
+            ticket_ids.append(response.json()["id"])
+
+        # Batch update to completed
+        response = client.post(
+            "/api/tickets/batch/status",
+            json={"ticketIds": ticket_ids, "isCompleted": True}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert data["success"] is True
+        assert data["affectedCount"] == 3
+        assert "completed" in data["message"]
+
+        # Verify all tickets are completed
+        for ticket_id in ticket_ids:
+            response = client.get(f"/api/tickets/{ticket_id}")
+            assert response.json()["isCompleted"] is True
+
+    def test_batch_update_status_to_open(self, client):
+        """Test batch updating tickets to open status"""
+        # Create completed tickets
+        ticket_ids = []
+        for i in range(2):
+            response = client.post("/api/tickets", json={"title": f"Ticket {i+1}"})
+            ticket_id = response.json()["id"]
+            # Mark as completed
+            client.patch(f"/api/tickets/{ticket_id}/complete")
+            ticket_ids.append(ticket_id)
+
+        # Batch update to open
+        response = client.post(
+            "/api/tickets/batch/status",
+            json={"ticketIds": ticket_ids, "isCompleted": False}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert data["success"] is True
+        assert data["affectedCount"] == 2
+        assert "open" in data["message"]
+
+        # Verify all tickets are open
+        for ticket_id in ticket_ids:
+            response = client.get(f"/api/tickets/{ticket_id}")
+            assert response.json()["isCompleted"] is False
+
+    def test_batch_update_status_empty_list(self, client):
+        """Test batch update with empty ticket list fails"""
+        response = client.post(
+            "/api/tickets/batch/status",
+            json={"ticketIds": [], "isCompleted": True}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "No ticket IDs provided" in response.json()["detail"]
+
+    def test_batch_update_status_nonexistent_tickets(self, client):
+        """Test batch update with nonexistent ticket IDs"""
+        response = client.post(
+            "/api/tickets/batch/status",
+            json={"ticketIds": [9999, 9998], "isCompleted": True}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert data["affectedCount"] == 0
+
+    def test_batch_delete_tickets(self, client):
+        """Test batch deleting tickets"""
+        # Create multiple tickets
+        ticket_ids = []
+        for i in range(4):
+            response = client.post("/api/tickets", json={"title": f"Ticket {i+1}"})
+            ticket_ids.append(response.json()["id"])
+
+        # Batch delete
+        response = client.post(
+            "/api/tickets/batch/delete",
+            json={"ticketIds": ticket_ids}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert data["success"] is True
+        assert data["affectedCount"] == 4
+        assert "deleted" in data["message"]
+
+        # Verify tickets are deleted
+        for ticket_id in ticket_ids:
+            response = client.get(f"/api/tickets/{ticket_id}")
+            assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_batch_delete_partial(self, client):
+        """Test batch delete with mix of existing and nonexistent tickets"""
+        # Create some tickets
+        ticket_ids = []
+        for i in range(2):
+            response = client.post("/api/tickets", json={"title": f"Ticket {i+1}"})
+            ticket_ids.append(response.json()["id"])
+
+        # Add nonexistent IDs
+        all_ids = ticket_ids + [9999, 9998]
+
+        # Batch delete
+        response = client.post(
+            "/api/tickets/batch/delete",
+            json={"ticketIds": all_ids}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert data["success"] is True
+        assert data["affectedCount"] == 2  # Only existing tickets deleted
+
+    def test_batch_delete_empty_list(self, client):
+        """Test batch delete with empty ticket list fails"""
+        response = client.post(
+            "/api/tickets/batch/delete",
+            json={"ticketIds": []}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "No ticket IDs provided" in response.json()["detail"]
+
+    def test_batch_operations_with_tags(self, client):
+        """Test batch operations work correctly with tagged tickets"""
+        # Create a tag
+        tag_response = client.post("/api/tags", json={"name": "urgent"})
+        tag_id = tag_response.json()["id"]
+
+        # Create tickets with tags
+        ticket_ids = []
+        for i in range(3):
+            response = client.post(
+                "/api/tickets",
+                json={"title": f"Tagged Ticket {i+1}", "tagIds": [tag_id]}
+            )
+            ticket_ids.append(response.json()["id"])
+
+        # Batch update status
+        response = client.post(
+            "/api/tickets/batch/status",
+            json={"ticketIds": ticket_ids, "isCompleted": True}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()["affectedCount"] == 3
+
+        # Verify tags are preserved
+        for ticket_id in ticket_ids:
+            response = client.get(f"/api/tickets/{ticket_id}")
+            ticket = response.json()
+            assert len(ticket["tags"]) == 1
+            assert ticket["tags"][0]["id"] == tag_id
+
+        # Batch delete (should also remove tag associations)
+        response = client.post(
+            "/api/tickets/batch/delete",
+            json={"ticketIds": ticket_ids}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()["affectedCount"] == 3

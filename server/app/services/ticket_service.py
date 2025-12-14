@@ -221,3 +221,57 @@ def remove_tag(db: Session, ticket_id: int, tag_id: int) -> Ticket:
     db.commit()
     db.refresh(db_ticket)
     return db_ticket
+
+
+def batch_update_status(db: Session, ticket_ids: List[int], is_completed: bool) -> int:
+    """
+    Batch update ticket completion status
+
+    Args:
+        db: Database session
+        ticket_ids: List of ticket IDs to update
+        is_completed: New completion status
+
+    Returns:
+        Number of tickets updated
+
+    Raises:
+        HTTPException: If no valid ticket IDs provided
+    """
+    if not ticket_ids:
+        raise HTTPException(status_code=400, detail="No ticket IDs provided")
+
+    # Update all tickets with the given IDs
+    result = db.query(Ticket).filter(Ticket.id.in_(ticket_ids)).update(
+        {Ticket.is_completed: is_completed},
+        synchronize_session=False
+    )
+
+    db.commit()
+    return result
+
+
+def batch_delete(db: Session, ticket_ids: List[int]) -> int:
+    """
+    Batch delete tickets
+
+    Args:
+        db: Database session
+        ticket_ids: List of ticket IDs to delete
+
+    Returns:
+        Number of tickets deleted
+
+    Raises:
+        HTTPException: If no valid ticket IDs provided
+    """
+    if not ticket_ids:
+        raise HTTPException(status_code=400, detail="No ticket IDs provided")
+
+    # Delete all tickets with the given IDs
+    result = db.query(Ticket).filter(Ticket.id.in_(ticket_ids)).delete(
+        synchronize_session=False
+    )
+
+    db.commit()
+    return result

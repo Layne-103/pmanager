@@ -7,7 +7,10 @@ from app.schemas.ticket import (
     TicketUpdate,
     TicketResponse,
     TicketsListResponse,
-    AddTagsRequest
+    AddTagsRequest,
+    BatchUpdateStatusRequest,
+    BatchDeleteRequest,
+    BatchOperationResponse
 )
 from app.services import ticket_service
 
@@ -81,3 +84,53 @@ def add_tags_to_ticket(
 def remove_tag_from_ticket(ticket_id: int, tag_id: int, db: Session = Depends(get_db)):
     """Remove a tag from a ticket"""
     return ticket_service.remove_tag(db, ticket_id, tag_id)
+
+
+@router.post("/batch/status", response_model=BatchOperationResponse)
+def batch_update_status(request: BatchUpdateStatusRequest, db: Session = Depends(get_db)):
+    """Batch update ticket completion status
+
+    Updates the completion status for multiple tickets at once.
+
+    Example request:
+    ```json
+    {
+        "ticketIds": [1, 2, 3],
+        "isCompleted": true
+    }
+    ```
+    """
+    affected_count = ticket_service.batch_update_status(
+        db,
+        request.ticket_ids,
+        request.is_completed
+    )
+
+    status_text = "completed" if request.is_completed else "open"
+    return BatchOperationResponse(
+        success=True,
+        affected_count=affected_count,
+        message=f"Successfully updated {affected_count} ticket(s) to {status_text}"
+    )
+
+
+@router.post("/batch/delete", response_model=BatchOperationResponse)
+def batch_delete_tickets(request: BatchDeleteRequest, db: Session = Depends(get_db)):
+    """Batch delete tickets
+
+    Deletes multiple tickets at once.
+
+    Example request:
+    ```json
+    {
+        "ticketIds": [1, 2, 3]
+    }
+    ```
+    """
+    affected_count = ticket_service.batch_delete(db, request.ticket_ids)
+
+    return BatchOperationResponse(
+        success=True,
+        affected_count=affected_count,
+        message=f"Successfully deleted {affected_count} ticket(s)"
+    )

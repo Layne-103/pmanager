@@ -29,3 +29,18 @@ export interface UpdateTicketRequest {
 export interface TicketsListResponse {
   tickets: Ticket[];
 }
+
+export interface BatchUpdateStatusRequest {
+  ticketIds: number[];
+  isCompleted: boolean;
+}
+
+export interface BatchDeleteRequest {
+  ticketIds: number[];
+}
+
+export interface BatchOperationResponse {
+  success: boolean;
+  affectedCount: number;
+  message: string;
+}
