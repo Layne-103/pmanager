@@ -4,6 +4,7 @@ export {
   useCreateTicket,
   useUpdateTicket,
   useDeleteTicket,
+  useToggleComplete,
   useToggleTicketComplete,
   useAddTagsToTicket,
   useRemoveTagFromTicket,

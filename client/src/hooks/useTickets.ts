@@ -49,8 +49,8 @@ export function useUpdateTicket() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, ticket }: { id: number; ticket: UpdateTicketRequest }) => 
-      ticketService.update(id, ticket),
+    mutationFn: ({ id, data }: { id: number; data: UpdateTicketRequest }) => 
+      ticketService.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['tickets'] });
       queryClient.invalidateQueries({ queryKey: ['tickets', variables.id] });
@@ -77,7 +77,7 @@ export function useDeleteTicket() {
 /**
  * Hook to toggle ticket completion status
  */
-export function useToggleTicketComplete() {
+export function useToggleComplete() {
   const queryClient = useQueryClient();
   
   return useMutation({
@@ -88,6 +88,9 @@ export function useToggleTicketComplete() {
     },
   });
 }
+
+// Keep old name for backward compatibility
+export const useToggleTicketComplete = useToggleComplete;
 
 /**
  * Hook to add tags to a ticket

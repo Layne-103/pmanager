@@ -1,26 +1,34 @@
-import { CheckCircle2, Circle, Calendar, Hash, Tag as TagIcon } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, Hash, Tag as TagIcon, Edit, Trash2 } from 'lucide-react';
 import type { Ticket } from '../../types';
 import { Card } from '../ui/Card';
+import { formatDistanceToNow } from 'date-fns';
 
 interface TicketCardProps {
   ticket: Ticket;
   index: number;
+  onEdit?: (ticket: Ticket) => void;
+  onDelete?: (id: number) => void;
+  onToggleComplete?: (id: number) => void;
 }
 
-export function TicketCard({ ticket, index }: TicketCardProps) {
+export function TicketCard({ ticket, index, onEdit, onDelete, onToggleComplete }: TicketCardProps) {
   return (
     <Card delay={index * 0.03} className="p-4 group shadow-sm hover:shadow-md">
       <div className="space-y-3">
         {/* Header with Title and Status */}
         <div className="flex items-start gap-3">
           {/* Checkbox */}
-          <div className="flex-shrink-0 pt-0.5">
+          <button
+            onClick={() => onToggleComplete?.(ticket.id)}
+            className="flex-shrink-0 pt-0.5 hover:scale-110 transition-transform"
+            title={ticket.isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+          >
             {ticket.isCompleted ? (
               <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
             ) : (
-              <Circle className="w-5 h-5 text-gray-400" strokeWidth={2} />
+              <Circle className="w-5 h-5 text-gray-400 hover:text-gray-600" strokeWidth={2} />
             )}
-          </div>
+          </button>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
@@ -66,21 +74,37 @@ export function TicketCard({ ticket, index }: TicketCardProps) {
               </div>
             )}
 
-            {/* Footer Metadata */}
-            <div className="flex items-center gap-3 text-xs text-gray-500 pt-2 border-t border-gray-100">
-              <div className="flex items-center gap-1">
-                <Hash className="w-3 h-3" />
-                <span>{ticket.id}</span>
+            {/* Footer Metadata and Actions */}
+            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+              <div className="flex items-center gap-3 text-xs text-gray-500">
+                <div className="flex items-center gap-1">
+                  <Hash className="w-3 h-3" />
+                  <span>{ticket.id}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  <span>
+                    {formatDistanceToNow(new Date(ticket.createdAt), { addSuffix: true })}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                <span>
-                  {new Date(ticket.createdAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </span>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => onEdit?.(ticket)}
+                  className="p-1.5 rounded-md hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+                  title="Edit ticket"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => onDelete?.(ticket.id)}
+                  className="p-1.5 rounded-md hover:bg-red-50 text-gray-600 hover:text-red-600 transition-colors"
+                  title="Delete ticket"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
