@@ -1,0 +1,52 @@
+version: '3.8'
+
+# Development docker-compose configuration
+# This is for local development with hot-reload
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: pmanager-db-dev
+    environment:
+      POSTGRES_DB: pmanager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./server/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - pmanager-network-dev
+
+  # Backend API (Development with hot-reload)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend.dev
+    container_name: pmanager-backend-dev
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/pmanager
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
+    volumes:
+      - ./server:/app:delegated
+    depends_on:
+      - db
+    networks:
+      - pmanager-network-dev
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Frontend (Development with hot-reload)
+  # Note: For best performance, run `npm run dev` locally instead
+  # This is here for completeness but Vite dev server works better on host
+
+networks:
+  pmanager-network-dev:
+    driver: bridge
+
+volumes:
+  postgres_data_dev:
+    driver: local
