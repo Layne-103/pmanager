@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Tag, Ticket } from 'lucide-react';
+import { Tag as TagIcon, Ticket } from 'lucide-react';
 import type { TagWithCount } from '../../types';
 import { Card } from '../ui/Card';
 
@@ -10,71 +10,62 @@ interface TagCardProps {
 
 export function TagCard({ tag, index }: TagCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.4,
-        delay: index * 0.05,
-        ease: [0.25, 0.1, 0.25, 1],
-      }}
-    >
-      <Card className="p-6 group cursor-pointer">
+    <Card delay={index * 0.05} className="p-6 group">
+      <div className="space-y-4">
+        {/* Icon and Title */}
         <div className="flex items-start space-x-4">
-          {/* Icon */}
           <motion.div
-            whileHover={{ rotate: 360, scale: 1.1 }}
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
-            className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300"
+            whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+            transition={{ duration: 0.5 }}
+            className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
             style={{
               backgroundColor: tag.color || '#e5e7eb',
-              boxShadow: `0 8px 24px ${tag.color || '#e5e7eb'}30`,
+              boxShadow: tag.color ? `0 10px 30px -5px ${tag.color}40` : undefined,
             }}
           >
-            <Tag
-              className="w-6 h-6"
-              style={{
-                color: tag.color ? '#fff' : '#374151',
-              }}
+            <TagIcon
+              className="w-7 h-7"
+              style={{ color: tag.color ? '#ffffff' : '#6b7280' }}
               strokeWidth={2.5}
             />
           </motion.div>
 
-          {/* Content */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors duration-200">
+            <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
               {tag.name}
             </h3>
-
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
-              <Ticket className="w-4 h-4" />
-              <span>
+            <div className="flex items-center gap-2 mt-1">
+              <Ticket className="w-4 h-4 text-gray-400" />
+              <p className="text-sm text-gray-500">
                 {tag.ticketCount} {tag.ticketCount === 1 ? 'ticket' : 'tickets'}
-              </span>
+              </p>
             </div>
-
-            {tag.color && (
-              <div className="mt-3 flex items-center space-x-2">
-                <div
-                  className="w-4 h-4 rounded-full border-2 border-white shadow-sm"
-                  style={{ backgroundColor: tag.color }}
-                />
-                <span className="text-xs font-mono text-gray-400 uppercase">
-                  {tag.color}
-                </span>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Hover effect overlay */}
-        <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-300 pointer-events-none"
-          style={{
-            background: `radial-gradient(circle at top right, ${tag.color || '#e5e7eb'}10, transparent)`,
-          }}
-        />
-      </Card>
-    </motion.div>
+        {/* Color Code */}
+        {tag.color && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: index * 0.05 + 0.2 }}
+            className="flex items-center justify-between pt-3 border-t border-gray-100"
+          >
+            <span className="text-xs font-mono text-gray-400 uppercase tracking-wider">
+              Color
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-gray-600">
+                {tag.color}
+              </span>
+              <div
+                className="w-4 h-4 rounded border border-gray-200"
+                style={{ backgroundColor: tag.color }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </Card>
   );
 }

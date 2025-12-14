@@ -8,12 +8,11 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'animate-pulse bg-gradient-to-r from-gray-200/50 via-gray-100/50 to-gray-200/50',
-        'bg-[length:200%_100%] rounded-xl',
+        'animate-pulse rounded-xl bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]',
         className
       )}
       style={{
-        animation: 'shimmer 2s infinite',
+        animation: 'shimmer 2s ease-in-out infinite',
       }}
     />
   );
