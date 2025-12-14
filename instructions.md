@@ -24,3 +24,9 @@
 # add seed.sql
 Add a file named "seed.sql" which contains 50 meaningful tickets and 10 tags (including platform tags such as "ios", project tags such as "auto release", functional tags such as "autocomplete", etc.)
 
+
+# Optimize the ui
+
+按照apple website 的设计风格， think ultra hard, 优化UI 和UX
+
+
