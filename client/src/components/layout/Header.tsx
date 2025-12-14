@@ -1,37 +1,84 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Layers, Tag } from 'lucide-react';
+import { cn } from '../../lib/cn';
 
 export function Header() {
+  const location = useLocation();
+
+  const navItems = [
+    { path: '/', label: 'Tickets', icon: Layers },
+    { path: '/tags', label: 'Tags', icon: Tag },
+  ];
+
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <motion.header
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+      className="sticky top-0 z-50 glass shadow-sm"
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">T</span>
-              </div>
-              <h1 className="text-xl font-bold text-gray-900">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-3 group">
+            <motion.div
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+              className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg group-hover:shadow-blue-500/50 transition-shadow duration-300"
+            >
+              <Layers className="w-5 h-5 text-white" strokeWidth={2.5} />
+            </motion.div>
+            <div>
+              <h1 className="text-xl font-semibold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                 Ticket Manager
               </h1>
-            </Link>
-          </div>
-          
-          <nav className="flex items-center space-x-6">
-            <Link 
-              to="/" 
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
-            >
-              Tickets
-            </Link>
-            <Link 
-              to="/tags" 
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
-            >
-              Tags
-            </Link>
+            </div>
+          </Link>
+
+          {/* Navigation */}
+          <nav className="flex items-center space-x-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className="relative px-4 py-2 rounded-xl group"
+                >
+                  <div
+                    className={cn(
+                      'flex items-center space-x-2 transition-all duration-200',
+                      isActive
+                        ? 'text-blue-600'
+                        : 'text-gray-600 group-hover:text-gray-900'
+                    )}
+                  >
+                    <Icon className="w-4 h-4" strokeWidth={2.5} />
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+
+                  {/* Active indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-blue-50/80 rounded-xl -z-10"
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+
+                  {/* Hover effect */}
+                  {!isActive && (
+                    <div className="absolute inset-0 bg-gray-50/0 group-hover:bg-gray-50/80 rounded-xl -z-10 transition-colors duration-200" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }
