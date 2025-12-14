@@ -33,36 +33,48 @@ export function TicketsPage() {
       setIsModalOpen(false);
       toast.success('Ticket created successfully');
     } catch (error) {
+      console.error('Create error:', error);
       toast.error('Failed to create ticket');
     }
   };
 
   const handleEdit = (ticket: Ticket) => {
+    console.log('Editing ticket:', ticket);
     setEditingTicket(ticket);
     setIsModalOpen(true);
   };
 
   const handleUpdate = async (data: CreateTicketRequest) => {
-    if (!editingTicket) return;
+    if (!editingTicket) {
+      console.error('No ticket being edited');
+      return;
+    }
     
     try {
+      console.log('Updating ticket:', editingTicket.id, data);
       await updateMutation.mutateAsync({ id: editingTicket.id, data });
       setIsModalOpen(false);
       setEditingTicket(null);
       toast.success('Ticket updated successfully');
     } catch (error) {
+      console.error('Update error:', error);
       toast.error('Failed to update ticket');
     }
   };
 
   const handleDelete = async () => {
-    if (!deletingTicketId) return;
+    if (!deletingTicketId) {
+      console.error('No ticket to delete');
+      return;
+    }
     
     try {
+      console.log('Deleting ticket:', deletingTicketId);
       await deleteMutation.mutateAsync(deletingTicketId);
       setDeletingTicketId(null);
       toast.success('Ticket deleted successfully');
     } catch (error) {
+      console.error('Delete error:', error);
       toast.error('Failed to delete ticket');
     }
   };
@@ -72,6 +84,7 @@ export function TicketsPage() {
       await toggleMutation.mutateAsync(id);
       toast.success('Ticket status updated');
     } catch (error) {
+      console.error('Toggle error:', error);
       toast.error('Failed to update ticket status');
     }
   };
@@ -139,7 +152,9 @@ export function TicketsPage() {
         />
 
         {/* Floating Action Button */}
-        <FloatingActionButton onClick={handleOpenModal} label="New Ticket" />
+        {!isLoading && (
+          <FloatingActionButton onClick={handleOpenModal} label="New Ticket" />
+        )}
 
         {/* Create/Edit Modal */}
         <TicketModal
@@ -158,6 +173,7 @@ export function TicketsPage() {
           title="Delete Ticket"
           description="Are you sure you want to delete this ticket? This action cannot be undone."
           confirmLabel="Delete"
+          cancelLabel="Cancel"
           variant="destructive"
         />
       </div>

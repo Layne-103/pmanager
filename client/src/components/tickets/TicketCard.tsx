@@ -12,6 +12,21 @@ interface TicketCardProps {
 }
 
 export function TicketCard({ ticket, index, onEdit, onDelete, onToggleComplete }: TicketCardProps) {
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit?.(ticket);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete?.(ticket.id);
+  };
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleComplete?.(ticket.id);
+  };
+
   return (
     <Card delay={index * 0.03} className="p-4 group shadow-sm hover:shadow-md">
       <div className="space-y-3">
@@ -19,9 +34,10 @@ export function TicketCard({ ticket, index, onEdit, onDelete, onToggleComplete }
         <div className="flex items-start gap-3">
           {/* Checkbox */}
           <button
-            onClick={() => onToggleComplete?.(ticket.id)}
+            onClick={handleToggle}
             className="flex-shrink-0 pt-0.5 hover:scale-110 transition-transform"
             title={ticket.isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+            type="button"
           >
             {ticket.isCompleted ? (
               <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
@@ -89,22 +105,28 @@ export function TicketCard({ ticket, index, onEdit, onDelete, onToggleComplete }
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={() => onEdit?.(ticket)}
-                  className="p-1.5 rounded-md hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
-                  title="Edit ticket"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => onDelete?.(ticket.id)}
-                  className="p-1.5 rounded-md hover:bg-red-50 text-gray-600 hover:text-red-600 transition-colors"
-                  title="Delete ticket"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+              {/* Action Buttons - Always visible on mobile, hover on desktop */}
+              <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                {onEdit && (
+                  <button
+                    onClick={handleEdit}
+                    className="p-1.5 rounded-md hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
+                    title="Edit ticket"
+                    type="button"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
+                {onDelete && (
+                  <button
+                    onClick={handleDelete}
+                    className="p-1.5 rounded-md hover:bg-red-50 text-gray-600 hover:text-red-600 transition-colors"
+                    title="Delete ticket"
+                    type="button"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
