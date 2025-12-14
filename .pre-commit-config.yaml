@@ -1,0 +1,153 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+
+default_language_version:
+  python: python3.13
+  node: system
+
+repos:
+  # General hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+        exclude: 'tsconfig.*\.json$'
+      - id: check-toml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+
+  # Python hooks
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        name: Format Python code (black)
+        language_version: python3.13
+        files: ^server/
+        args: ['--line-length=100']
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        name: Lint Python code (ruff)
+        files: ^server/
+        args: ['--fix', '--exit-non-zero-on-fix']
+      - id: ruff-format
+        name: Format Python code (ruff)
+        files: ^server/
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.14.0
+    hooks:
+      - id: mypy
+        name: Type check Python code (mypy)
+        files: ^server/
+        additional_dependencies:
+          - types-python-dateutil
+          - types-requests
+          - sqlalchemy[mypy]
+        args:
+          - --ignore-missing-imports
+          - --no-strict-optional
+          - --warn-redundant-casts
+          - --warn-unused-ignores
+
+  # Python import sorting
+  - repo: https://github.com/pycqa/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
+        name: Sort Python imports (isort)
+        files: ^server/
+        args: ['--profile', 'black', '--line-length', '100']
+
+  # TypeScript/JavaScript hooks
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.17.0
+    hooks:
+      - id: eslint
+        name: Lint TypeScript/JavaScript (eslint)
+        files: ^client/src/.*\.[jt]sx?$
+        types: [file]
+        additional_dependencies:
+          - eslint@9.39.1
+          - typescript@~5.9.3
+          - typescript-eslint@8.46.4
+          - eslint-plugin-react-hooks@7.0.1
+          - eslint-plugin-react-refresh@0.4.24
+          - '@eslint/js@9.39.1'
+          - globals@16.5.0
+        args: ['--fix', '--max-warnings=0']
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        name: Format TypeScript/JavaScript (prettier)
+        files: ^client/.*\.(ts|tsx|js|jsx|json|css|md)$
+        additional_dependencies:
+          - prettier@3.4.2
+        args:
+          - --write
+          - --print-width=100
+          - --single-quote
+          - --trailing-comma=es5
+          - --tab-width=2
+
+  # YAML/JSON formatting
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        name: Format YAML/JSON
+        types_or: [yaml, json]
+        exclude: ^client/(package-lock\.json|node_modules/)
+        args: ['--write']
+
+  # Markdown
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+        name: Lint Markdown files
+        args: ['--fix']
+
+  # Shell scripts
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        name: Lint shell scripts
+
+  # Git commit message
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.19.1
+    hooks:
+      - id: gitlint
+        name: Check commit message format
+        stages: [commit-msg]
+
+# Configuration for specific tools
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false

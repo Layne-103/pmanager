@@ -132,6 +132,18 @@ The frontend will be available at http://localhost:5173
 
 ## Development
 
+### Quick Start for Development
+
+**Automated setup:**
+```bash
+./setup-dev.sh
+```
+
+This script will:
+- Install pre-commit hooks
+- Install Python and Node.js dependencies
+- Set up development environment
+
 ### Running Both Servers
 
 Terminal 1 - Backend:
@@ -152,6 +164,45 @@ Terminal 2 - Frontend:
 cd client
 npm run dev
 ```
+
+### Code Quality and Pre-commit Hooks
+
+This project uses pre-commit for code quality checks. **Hooks run MANUALLY only** (not automatic on commit).
+
+**What's checked:**
+- ✅ Python: Black, Ruff, isort, mypy
+- ✅ TypeScript: ESLint, Prettier
+- ✅ General: trailing whitespace, file endings, YAML/JSON validation
+- ✅ Markdown: markdownlint
+- ✅ Shell: shellcheck
+- ✅ Commit messages: gitlint (conventional commits)
+
+**Manual execution (recommended before committing):**
+```bash
+# Run all hooks manually
+pre-commit run --all-files
+
+# Or format code directly:
+# Python
+cd server && black . && ruff check --fix .
+
+# TypeScript
+cd client && npm run format && npm run lint:fix
+
+# Type check TypeScript
+cd client && npm run type-check
+```
+
+**Optional: Install automatic hooks**
+```bash
+# If you want hooks to run automatically on commit:
+pre-commit install
+pre-commit install --hook-type commit-msg
+```
+
+**Documentation:**
+- [Pre-commit Setup Guide](docs/PRE_COMMIT_SETUP.md)
+- [Contributing Guide](CONTRIBUTING.md)
 
 ### Database Management
 
