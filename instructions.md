@@ -17,7 +17,10 @@
 按照 ./specs/0001-spec.md 中的需求和设计文档，生成生成一个详细的实现计划， 放在 ./specs/0002-implementation-plan.md 中，输出为英文。
 
 # Phased implementation
-
-
 按照  ./specs/0002-implementation-plan.md 完整实现整个项目的 phase 1 代码
+
+按照  ./specs/0002-implementation-plan.md 完整实现整个项目的 phase 2 代码
+
+# add seed.sql
+Add a file named "seed.sql" which contains 50 meaningful tickets and 10 tags (including platform tags such as "ios", project tags such as "auto release", functional tags such as "autocomplete", etc.)
 
