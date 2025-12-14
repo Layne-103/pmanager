@@ -293,6 +293,12 @@ GET {{baseUrl}}/api/tickets/?search=fix&status=open&tags=1,2
 # Ticket Error Cases
 ###############################################################################
 
+### Error: Invalid tag IDs (non-numeric)
+GET {{baseUrl}}/api/tickets/?tags=abc,xyz
+
+### Error: Mixed valid and invalid tag IDs
+GET {{baseUrl}}/api/tickets/?tags=1,abc,2
+
 ### Error: Create ticket without title (should fail)
 POST {{baseUrl}}/api/tickets/
 Content-Type: application/json

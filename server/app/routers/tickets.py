@@ -22,7 +22,15 @@ def get_tickets(
     db: Session = Depends(get_db)
 ):
     """Get all tickets with optional filters"""
-    tag_ids = [int(t) for t in tags.split(",")] if tags else None
+    tag_ids = None
+    if tags:
+        try:
+            tag_ids = [int(t.strip()) for t in tags.split(",") if t.strip()]
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid tag IDs. Tag IDs must be comma-separated integers (e.g., '1,2,3')"
+            )
     tickets = ticket_service.get_tickets(db, search, tag_ids, status)
     return TicketsListResponse(tickets=tickets)
 
