@@ -133,7 +133,7 @@ npm run type-check
 
 ## Pre-commit Hooks
 
-Pre-commit hooks run automatically before each commit to ensure code quality.
+Pre-commit hooks are configured but **run MANUALLY only** (not automatic on commit). This gives you control over when to run code quality checks.
 
 ### What Gets Checked
 
@@ -164,10 +164,10 @@ Pre-commit hooks run automatically before each commit to ensure code quality.
 **Commit messages:**
 - Gitlint (enforces conventional commit format)
 
-### Running Pre-commit Manually
+### Running Pre-commit Manually (Recommended Before Committing)
 
 ```bash
-# Run on all files
+# Run on all files (recommended before committing)
 pre-commit run --all-files
 
 # Run on staged files only
@@ -180,15 +180,23 @@ pre-commit run black --all-files
 pre-commit autoupdate
 ```
 
-### Bypassing Pre-commit (Not Recommended)
+### Optional: Install Automatic Hooks
 
-In rare cases, you may need to bypass pre-commit:
+If you prefer hooks to run automatically on every commit:
 
 ```bash
-git commit --no-verify -m "your message"
+pre-commit install
+pre-commit install --hook-type commit-msg
 ```
 
-**Note**: CI will still run all checks, so bypassing locally will likely fail in CI.
+To uninstall automatic hooks:
+
+```bash
+pre-commit uninstall
+pre-commit uninstall --hook-type commit-msg
+```
+
+**Note**: Even without automatic hooks, CI will still run all checks on push/PR.
 
 ## Testing
 
@@ -254,24 +262,33 @@ npm run type-check
    cd client && npm run type-check && npm run lint
    ```
 
-4. **Commit your changes**
+4. **Run pre-commit checks (recommended)**
 
-   Pre-commit hooks will run automatically:
+   Run pre-commit manually before committing:
+
+   ```bash
+   # Run all checks
+   pre-commit run --all-files
+
+   # Or format code directly
+   cd server && black . && ruff check --fix .
+   cd client && npm run format && npm run lint:fix
+   ```
+
+5. **Commit your changes**
 
    ```bash
    git add .
    git commit -m "feat: add new feature"
    ```
 
-   If pre-commit fails, fix the issues and try again.
-
-5. **Push your branch**
+6. **Push your branch**
 
    ```bash
    git push origin feat/your-feature-name
    ```
 
-6. **Create a Pull Request**
+7. **Create a Pull Request**
 
    - Go to GitHub and create a PR
    - Fill in the PR template

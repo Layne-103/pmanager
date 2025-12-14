@@ -10,11 +10,12 @@ Quick reference for using pre-commit hooks in this project.
 
 # Or manual
 pip install pre-commit
-pre-commit install
-pre-commit install --hook-type commit-msg
+
+# Note: Hooks are NOT installed automatically by default
+# This allows you to run pre-commit manually when you choose
 ```
 
-## Daily Workflow
+## Daily Workflow (Manual Pre-commit)
 
 ```bash
 # 1. Make your changes
@@ -23,12 +24,32 @@ vim some_file.py
 # 2. Stage changes
 git add .
 
-# 3. Commit (hooks run automatically)
+# 3. Run pre-commit manually (recommended before committing)
+pre-commit run --all-files
+
+# 4. If checks pass, commit
 git commit -m "feat: add new feature"
 
-# If hooks fail, fix issues and try again
+# If checks fail, fix issues and run again
 git add .
+pre-commit run --all-files
 git commit -m "feat: add new feature"
+```
+
+## Optional: Install Automatic Hooks
+
+If you want hooks to run automatically on every commit:
+
+```bash
+pre-commit install
+pre-commit install --hook-type commit-msg
+```
+
+To uninstall:
+
+```bash
+pre-commit uninstall
+pre-commit uninstall --hook-type commit-msg
 ```
 
 ## Common Commands

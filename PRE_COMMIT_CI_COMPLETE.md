@@ -175,13 +175,19 @@ Features:
 
 ### 7. Git Configuration
 
-Hooks installed:
-- ✅ `.git/hooks/pre-commit` - Runs before commit
-- ✅ `.git/hooks/commit-msg` - Validates commit messages
+**Hooks are NOT installed automatically** - Pre-commit runs manually only:
+- ⚠️ `.git/hooks/pre-commit` - NOT installed (manual execution only)
+- ⚠️ `.git/hooks/commit-msg` - NOT installed (manual execution only)
+
+To install automatic hooks (optional):
+```bash
+pre-commit install
+pre-commit install --hook-type commit-msg
+```
 
 ## Usage
 
-### Daily Development Workflow
+### Daily Development Workflow (Manual Pre-commit)
 
 ```bash
 # 1. Make changes
@@ -190,12 +196,28 @@ vim some_file.py
 # 2. Stage changes
 git add .
 
-# 3. Commit (hooks run automatically)
+# 3. Run pre-commit manually (recommended)
+pre-commit run --all-files
+
+# 4. Commit
 git commit -m "feat: add new feature"
 
-# If hooks fail, fix and retry
+# If checks fail, fix and retry
 git add .
+pre-commit run --all-files
 git commit -m "feat: add new feature"
+```
+
+### Optional: Install Automatic Hooks
+
+```bash
+# Install automatic hooks (if you prefer)
+pre-commit install
+pre-commit install --hook-type commit-msg
+
+# Uninstall
+pre-commit uninstall
+pre-commit uninstall --hook-type commit-msg
 ```
 
 ### Manual Hook Execution

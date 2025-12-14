@@ -4,8 +4,9 @@ This guide explains how to set up and use pre-commit hooks in this project.
 
 ## What is Pre-commit?
 
-Pre-commit is a framework for managing git hook scripts. It runs automated checks before
-you commit code, ensuring code quality and consistency across the project.
+Pre-commit is a framework for managing code quality checks. In this project, pre-commit is
+configured to run **MANUALLY** (not automatically on commit), giving you control over when
+to run code quality checks.
 
 ## Quick Setup
 
@@ -31,9 +32,12 @@ If you prefer manual setup:
 # Install pre-commit
 pip install pre-commit
 
-# Install hooks
-pre-commit install
-pre-commit install --hook-type commit-msg
+# Note: Hooks are NOT installed automatically
+# Pre-commit will run manually only when you choose
+
+# Optional: Install automatic hooks (if you want them to run on commit)
+# pre-commit install
+# pre-commit install --hook-type commit-msg
 
 # Install hook environments (takes a few minutes)
 pre-commit install-hooks
@@ -71,12 +75,18 @@ pre-commit install-hooks
 
 ## Usage
 
-### Automatic (Default)
+### Manual Execution (Default)
 
-Pre-commit runs automatically when you commit:
+By default, pre-commit runs **MANUALLY** only when you choose:
 
 ```bash
+# Make your changes
 git add .
+
+# Run pre-commit manually (recommended before committing)
+pre-commit run --all-files
+
+# If checks pass, commit
 git commit -m "feat: add new feature"
 ```
 
@@ -84,7 +94,30 @@ If checks fail:
 1. Pre-commit will show you the errors
 2. Some issues are auto-fixed (you'll need to stage again)
 3. Fix remaining issues manually
-4. Stage and commit again
+4. Run pre-commit again and commit
+
+### Optional: Automatic Execution
+
+If you want hooks to run automatically on every commit:
+
+```bash
+pre-commit install
+pre-commit install --hook-type commit-msg
+```
+
+Then hooks will run automatically:
+
+```bash
+git add .
+git commit -m "feat: add new feature"  # Hooks run automatically
+```
+
+To uninstall automatic hooks:
+
+```bash
+pre-commit uninstall
+pre-commit uninstall --hook-type commit-msg
+```
 
 ### Manual Execution
 
@@ -131,7 +164,10 @@ git checkout -b feat/my-feature
 # Stage your changes
 git add .
 
-# Commit (pre-commit runs automatically)
+# Run pre-commit manually (recommended)
+pre-commit run --all-files
+
+# Commit
 git commit -m "feat: add my feature"
 ```
 
@@ -168,15 +204,19 @@ $ git add server/app/main.py
 $ git commit -m "feat: add feature"
 ```
 
-### Bypassing Pre-commit (Not Recommended)
-
-In rare cases, you may need to bypass:
+### Installing/Uninstalling Automatic Hooks
 
 ```bash
-git commit --no-verify -m "your message"
+# Install automatic hooks (optional)
+pre-commit install
+pre-commit install --hook-type commit-msg
+
+# Uninstall automatic hooks
+pre-commit uninstall
+pre-commit uninstall --hook-type commit-msg
 ```
 
-**Warning**: CI will still run all checks, so this will likely fail in CI.
+**Note**: CI will still run all checks regardless of local hook installation.
 
 ## Troubleshooting
 

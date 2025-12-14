@@ -2,7 +2,7 @@
 
 ## ✅ Setup Complete
 
-Pre-commit hooks and GitHub Actions CI/CD have been fully configured for this project.
+Pre-commit and GitHub Actions CI/CD have been fully configured. **Pre-commit runs MANUALLY only** (not automatic on commit) to give you control.
 
 ## What Was Installed
 
@@ -63,19 +63,27 @@ Or manually:
 # Install pre-commit
 pip install pre-commit
 
-# Install hooks
-pre-commit install
-pre-commit install --hook-type commit-msg
+# Note: Hooks are NOT installed automatically
+# Pre-commit will run manually only
+
+# Optional: Install automatic hooks (if you prefer)
+# pre-commit install
+# pre-commit install --hook-type commit-msg
 ```
 
-### Daily Workflow
+### Daily Workflow (Manual Pre-commit)
 
 ```bash
 # Make changes
 vim some_file.py
 
-# Stage and commit (hooks run automatically)
+# Stage changes
 git add .
+
+# Run pre-commit manually (recommended)
+pre-commit run --all-files
+
+# Commit
 git commit -m "feat: add new feature"
 ```
 
