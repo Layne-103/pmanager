@@ -11,9 +11,9 @@ interface TagSelectorProps {
 }
 
 /**
- * 简化的TagSelector组件
- * - 显示已选择的tags，每个tag有删除按钮
- * - 点击"Add Tag"显示可用tags的列表
+ * Simplified TagSelector component
+ * - Displays selected tags with remove buttons
+ * - Click "Add Tag" to show available tags dropdown
  */
 export function TagSelector({
   selectedTags,
@@ -30,7 +30,7 @@ export function TagSelector({
   console.log('Is loading:', isLoading);
   console.log('Disabled:', disabled);
 
-  // 过滤出未选择的tags
+  // Filter out already selected tags
   const availableTags = (allTags || [])
     .filter((tag) => !selectedTags.find((selected) => selected.id === tag.id))
     .map((tag) => ({
@@ -54,7 +54,7 @@ export function TagSelector({
 
   return (
     <div className="space-y-3">
-      {/* 已选择的Tags */}
+      {/* Selected Tags */}
       {selectedTags.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selectedTags.map((tag) => (
@@ -84,7 +84,7 @@ export function TagSelector({
         </div>
       )}
 
-      {/* Add Tag 按钮和下拉列表 */}
+      {/* Add Tag Button and Dropdown */}
       <div className="relative">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
@@ -97,16 +97,16 @@ export function TagSelector({
           {availableTags.length === 0 && !isLoading && ' (All tags added)'}
         </button>
 
-        {/* 下拉列表 */}
+        {/* Dropdown List */}
         {showDropdown && (
           <>
-            {/* 背景遮罩 */}
+            {/* Backdrop */}
             <div
               className="fixed inset-0 z-10"
               onClick={() => setShowDropdown(false)}
             />
 
-            {/* 下拉内容 */}
+            {/* Dropdown Content */}
             <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-20 max-h-64 overflow-auto">
               {isLoading && (
                 <div className="p-4 text-sm text-gray-500 text-center">
@@ -143,7 +143,7 @@ export function TagSelector({
         )}
       </div>
 
-      {/* 空状态提示 */}
+      {/* Empty State */}
       {selectedTags.length === 0 && !disabled && (
         <div className="text-sm text-gray-500 flex items-center gap-2">
           <TagIcon className="w-4 h-4" />

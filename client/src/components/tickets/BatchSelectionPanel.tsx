@@ -35,10 +35,10 @@ export function BatchSelectionPanel({
         <span className="text-sm font-medium text-gray-700">
           {selectedCount > 0 ? (
             <>
-              已选择 <span className="text-blue-600">{selectedCount}</span> / {totalCount}
+              Selected <span className="text-blue-600">{selectedCount}</span> / {totalCount}
             </>
           ) : (
-            <>共 {totalCount} 条记录</>
+            <>{totalCount} tickets</>
           )}
         </span>
       </div>
@@ -58,19 +58,19 @@ export function BatchSelectionPanel({
               ? 'bg-blue-500 text-white hover:bg-blue-600'
               : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
           )}
-          title={allSelected ? '取消全选' : '全选'}
-        >
-          {allSelected ? (
-            <>
-              <CheckSquare className="w-4 h-4" strokeWidth={2.5} />
-              取消全选
-            </>
-          ) : (
-            <>
-              <Square className="w-4 h-4" strokeWidth={2} />
-              全选
-            </>
-          )}
+            title={allSelected ? 'Deselect All' : 'Select All'}
+          >
+            {allSelected ? (
+              <>
+                <CheckSquare className="w-4 h-4" strokeWidth={2.5} />
+                Deselect All
+              </>
+            ) : (
+              <>
+                <Square className="w-4 h-4" strokeWidth={2} />
+                Select All
+              </>
+            )}
         </motion.button>
 
         {/* Select Completed */}
@@ -124,10 +124,10 @@ export function BatchSelectionPanel({
               ? 'bg-gray-50 text-gray-700 hover:bg-purple-50 hover:text-purple-700'
               : 'bg-gray-50 text-gray-400 cursor-not-allowed opacity-50'
           )}
-          title="反选"
+          title="Invert selection"
         >
           <RotateCcw className="w-4 h-4" strokeWidth={2} />
-          反选
+          Invert
         </motion.button>
 
         {/* Clear Selection */}
@@ -145,10 +145,10 @@ export function BatchSelectionPanel({
               'transition-all duration-200',
               'border border-gray-200'
             )}
-            title="清空选择"
+            title="Clear selection"
           >
             <XCircle className="w-4 h-4" strokeWidth={2} />
-            清空
+            Clear
           </motion.button>
         )}
       </div>

@@ -27,7 +27,7 @@ export function TicketHeader({
       <div className="flex items-center justify-between">
         {/* Left: Title */}
         <h2 className="text-base font-semibold text-gray-900">
-          批量操作
+          Batch Operations
         </h2>
 
         {/* Right: Sort Button */}
@@ -47,12 +47,12 @@ export function TicketHeader({
           {sortOrder === 'newest' ? (
             <>
               <ArrowDown className="w-4 h-4" strokeWidth={2} />
-              <span>创建时间 ↓</span>
+              <span>Date ↓</span>
             </>
           ) : (
             <>
               <ArrowUp className="w-4 h-4" strokeWidth={2} />
-              <span>创建时间 ↑</span>
+              <span>Date ↑</span>
             </>
           )}
         </motion.button>
