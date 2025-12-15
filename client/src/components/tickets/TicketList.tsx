@@ -10,6 +10,8 @@ interface TicketListProps {
   onDelete?: (id: number) => void;
   onToggleComplete?: (id: number) => void;
   onCreateTicket?: () => void;
+  selectedTickets?: Set<number>;
+  onSelect?: (id: number, selected: boolean) => void;
 }
 
 export function TicketList({
@@ -19,6 +21,8 @@ export function TicketList({
   onDelete,
   onToggleComplete,
   onCreateTicket,
+  selectedTickets = new Set(),
+  onSelect = () => {}, // Provide default no-op function
 }: TicketListProps) {
   if (loading) {
     return <TicketSkeletonGrid count={6} />;
@@ -38,6 +42,8 @@ export function TicketList({
           onEdit={onEdit}
           onDelete={onDelete}
           onToggleComplete={onToggleComplete}
+          selected={selectedTickets.has(ticket.id)}
+          onSelect={onSelect}
         />
       ))}
     </div>

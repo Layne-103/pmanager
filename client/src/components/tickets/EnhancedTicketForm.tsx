@@ -19,6 +19,7 @@ interface EnhancedTicketFormProps {
   onCancel?: () => void;
   submitLabel?: string;
   isSubmitting?: boolean;
+  children?: React.ReactNode;
 }
 
 export function EnhancedTicketForm({
@@ -27,6 +28,7 @@ export function EnhancedTicketForm({
   onCancel,
   submitLabel = 'Save',
   isSubmitting = false,
+  children,
 }: EnhancedTicketFormProps) {
   const [title, setTitle] = useState(initialValues?.title || '');
   const [description, setDescription] = useState(initialValues?.description || '');
@@ -265,23 +267,29 @@ export function EnhancedTicketForm({
         </div>
       </div>
 
+      {/* Additional Content (e.g., Tags) */}
+      {children && (
+        <div className="pt-6 border-t border-gray-200">
+          {children}
+        </div>
+      )}
+
       {/* Form Actions */}
-      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+      <div className="flex justify-end gap-6 pt-4 border-t border-gray-200">
         {onCancel && (
-          <Button
+          <button
             type="button"
-            variant="outline"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="min-w-[100px]"
+            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
-          </Button>
+          </button>
         )}
-        <Button
+        <button
           type="submit"
           disabled={!isFormValid || isSubmitting}
-          className="min-w-[120px]"
+          className="px-4 py-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
@@ -310,7 +318,7 @@ export function EnhancedTicketForm({
           ) : (
             submitLabel
           )}
-        </Button>
+        </button>
       </div>
     </form>
   );

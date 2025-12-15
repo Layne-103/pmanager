@@ -1,20 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Container } from '../components/layout';
-import { FilterPanel, TicketList, TicketModal } from '../components/tickets';
+import { 
+  TicketModal, 
+  TicketTable,
+  CombinedToolbar
+} from '../components/tickets';
 import { ConfirmDialog, FloatingActionButton } from '../components/common';
-import { useTickets, useCreateTicket, useUpdateTicket, useDeleteTicket, useToggleComplete } from '../hooks';
+import { 
+  useTickets, 
+  useCreateTicket, 
+  useUpdateTicket, 
+  useDeleteTicket, 
+  useToggleComplete,
+  useBatchUpdateStatus,
+  useBatchDeleteTickets 
+} from '../hooks';
 import type { Ticket, CreateTicketRequest } from '../types';
 
 export function TicketsPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('all');
   const [selectedTags, setSelectedTags] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
   const [deletingTicketId, setDeletingTicketId] = useState<number | null>(null);
+  
+  // Batch operations state
+  const [selectedTickets, setSelectedTickets] = useState<Set<number>>(new Set());
+  const [showBatchDeleteConfirm, setShowBatchDeleteConfirm] = useState(false);
 
   const { data: tickets, isLoading, error } = useTickets({
     search: search || undefined,
@@ -22,10 +39,26 @@ export function TicketsPage() {
     tags: selectedTags || undefined,
   });
 
+  // Sort tickets by creation time
+  const sortedTickets = useMemo(() => {
+    if (!tickets) return [];
+    
+    const sorted = [...tickets].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+    
+    return sorted;
+  }, [tickets, sortOrder]);
+
   const createMutation = useCreateTicket();
   const updateMutation = useUpdateTicket();
   const deleteMutation = useDeleteTicket();
   const toggleMutation = useToggleComplete();
+  const batchUpdateStatusMutation = useBatchUpdateStatus();
+  const batchDeleteMutation = useBatchDeleteTickets();
 
   const handleCreate = async (data: CreateTicketRequest) => {
     try {
@@ -114,6 +147,156 @@ export function TicketsPage() {
     setEditingTicket(null);
   };
 
+  // Batch operations handlers
+  const handleSelectTicket = (id: number, selected: boolean) => {
+    setSelectedTickets(prev => {
+      const newSet = new Set(prev);
+      if (selected) {
+        newSet.add(id);
+      } else {
+        newSet.delete(id);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked && sortedTickets && sortedTickets.length > 0) {
+      const allIds = new Set(sortedTickets.map(ticket => ticket.id));
+      setSelectedTickets(allIds);
+      toast.success(`Selected all ${sortedTickets.length} tickets`);
+    } else {
+      setSelectedTickets(new Set());
+      toast.info('Selection cleared');
+    }
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedTickets(new Set());
+    toast.info('Selection cleared');
+  };
+
+  const handleSelectCompleted = () => {
+    if (sortedTickets) {
+      const completedIds = new Set(
+        sortedTickets.filter(t => t.isCompleted).map(t => t.id)
+      );
+      setSelectedTickets(completedIds);
+      toast.success(`Selected ${completedIds.size} completed tickets`);
+    }
+  };
+
+  const handleSelectIncomplete = () => {
+    if (sortedTickets) {
+      const incompleteIds = new Set(
+        sortedTickets.filter(t => !t.isCompleted).map(t => t.id)
+      );
+      setSelectedTickets(incompleteIds);
+      toast.success(`Selected ${incompleteIds.size} incomplete tickets`);
+    }
+  };
+
+  const handleInvertSelection = () => {
+    if (sortedTickets) {
+      const allIds = sortedTickets.map(t => t.id);
+      const newSelection = new Set(
+        allIds.filter(id => !selectedTickets.has(id))
+      );
+      setSelectedTickets(newSelection);
+      toast.info(`Inverted selection: ${newSelection.size} tickets`);
+    }
+  };
+
+  const handleBatchMarkComplete = async () => {
+    const ticketIds = Array.from(selectedTickets);
+    try {
+      const result = await batchUpdateStatusMutation.mutateAsync({ 
+        ticketIds, 
+        isCompleted: true 
+      });
+      toast.success(result.message);
+      setSelectedTickets(new Set());
+    } catch (error) {
+      console.error('Batch complete error:', error);
+      toast.error('Failed to mark tickets as complete');
+    }
+  };
+
+  const handleBatchMarkIncomplete = async () => {
+    const ticketIds = Array.from(selectedTickets);
+    try {
+      const result = await batchUpdateStatusMutation.mutateAsync({ 
+        ticketIds, 
+        isCompleted: false 
+      });
+      toast.success(result.message);
+      setSelectedTickets(new Set());
+    } catch (error) {
+      console.error('Batch reopen error:', error);
+      toast.error('Failed to mark tickets as incomplete');
+    }
+  };
+
+  const handleBatchDeleteConfirm = async () => {
+    const ticketIds = Array.from(selectedTickets);
+    try {
+      const result = await batchDeleteMutation.mutateAsync(ticketIds);
+      toast.success(result.message);
+      setSelectedTickets(new Set());
+      setShowBatchDeleteConfirm(false);
+    } catch (error) {
+      console.error('Batch delete error:', error);
+      toast.error('Failed to delete tickets');
+    }
+  };
+
+  const handleCancelSelection = () => {
+    setSelectedTickets(new Set());
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle if not typing in an input field
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        isModalOpen
+      ) {
+        return;
+      }
+
+      // Ctrl/Cmd + A: Select all
+      if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+        e.preventDefault();
+        if (sortedTickets && sortedTickets.length > 0) {
+          handleSelectAll();
+        }
+      }
+
+      // Escape: Clear selection
+      if (e.key === 'Escape' && selectedTickets.size > 0) {
+        e.preventDefault();
+        handleCancelSelection();
+      }
+
+      // Ctrl/Cmd + I: Invert selection
+      if ((e.ctrlKey || e.metaKey) && e.key === 'i' && selectedTickets.size > 0) {
+        e.preventDefault();
+        handleInvertSelection();
+      }
+
+      // Delete: Batch delete (with confirmation)
+      if (e.key === 'Delete' && selectedTickets.size > 0) {
+        e.preventDefault();
+        setShowBatchDeleteConfirm(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [sortedTickets, selectedTickets, isModalOpen]);
+
   if (error) {
     return (
       <Container>
@@ -142,27 +325,43 @@ export function TicketsPage() {
             Tickets
           </h1>
           <p className="text-sm text-gray-600">
-            {isLoading ? 'Loading...' : `${tickets?.length || 0} total tickets`}
+            {isLoading ? 'Loading...' : `${sortedTickets?.length || 0} total tickets`}
           </p>
         </motion.div>
 
-        {/* Filters */}
-        <FilterPanel
-          search={search}
-          status={status}
-          selectedTags={selectedTags}
-          onSearchChange={setSearch}
-          onStatusChange={setStatus}
-          onTagsChange={setSelectedTags}
-        />
+        {/* Combined Toolbar: Filters + Batch Actions */}
+        {!isLoading && (
+          <CombinedToolbar
+            search={search}
+            status={status}
+            selectedTags={selectedTags}
+            onSearchChange={setSearch}
+            onStatusChange={setStatus}
+            onTagsChange={setSelectedTags}
+            totalCount={sortedTickets?.length || 0}
+            selectedCount={selectedTickets.size}
+            onSelectAll={handleSelectAll}
+            onDeselectAll={handleDeselectAll}
+            onSelectCompleted={handleSelectCompleted}
+            onSelectIncomplete={handleSelectIncomplete}
+            onInvertSelection={handleInvertSelection}
+            onBatchMarkComplete={handleBatchMarkComplete}
+            onBatchMarkIncomplete={handleBatchMarkIncomplete}
+            onBatchDelete={() => setShowBatchDeleteConfirm(true)}
+          />
+        )}
 
-        {/* Tickets List */}
-        <TicketList
-          tickets={tickets || []}
+        {/* Tickets Table */}
+        <TicketTable
+          tickets={sortedTickets || []}
           loading={isLoading}
+          sortOrder={sortOrder}
+          selectedTickets={selectedTickets}
+          onSortChange={setSortOrder}
+          onSelect={handleSelectTicket}
+          onSelectAll={handleSelectAll}
           onEdit={handleEdit}
           onDelete={setDeletingTicketId}
-          onToggleComplete={handleToggleComplete}
           onCreateTicket={handleOpenModal}
         />
 
@@ -188,6 +387,18 @@ export function TicketsPage() {
           title="Delete Ticket"
           description="Are you sure you want to delete this ticket? This action cannot be undone."
           confirmLabel="Delete"
+          cancelLabel="Cancel"
+          variant="destructive"
+        />
+
+        {/* Batch Delete Confirmation Dialog */}
+        <ConfirmDialog
+          open={showBatchDeleteConfirm}
+          onClose={() => setShowBatchDeleteConfirm(false)}
+          onConfirm={handleBatchDeleteConfirm}
+          title="Delete Multiple Tickets"
+          description={`Are you sure you want to delete ${selectedTickets.size} ticket(s)? This action cannot be undone.`}
+          confirmLabel="Delete All"
           cancelLabel="Cancel"
           variant="destructive"
         />

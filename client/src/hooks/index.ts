@@ -8,6 +8,8 @@ export {
   useToggleTicketComplete,
   useAddTagsToTicket,
   useRemoveTagFromTicket,
+  useBatchUpdateStatus,
+  useBatchDeleteTickets,
 } from './useTickets';
 
 export {

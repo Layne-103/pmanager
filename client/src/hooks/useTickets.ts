@@ -125,3 +125,33 @@ export function useRemoveTagFromTicket() {
     },
   });
 }
+
+/**
+ * Hook to batch update ticket status
+ */
+export function useBatchUpdateStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ ticketIds, isCompleted }: { ticketIds: number[]; isCompleted: boolean }) =>
+      ticketService.batchUpdateStatus(ticketIds, isCompleted),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tickets'] });
+    },
+  });
+}
+
+/**
+ * Hook to batch delete tickets
+ */
+export function useBatchDeleteTickets() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (ticketIds: number[]) => ticketService.batchDelete(ticketIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tickets'] });
+      queryClient.invalidateQueries({ queryKey: ['tags'] });
+    },
+  });
+}
